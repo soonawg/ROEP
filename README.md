@@ -1,4 +1,4 @@
-# ROEPBench
+# ROEP
 
 Deployment-oriented evaluation protocol for robotic manipulation tasks under systematic observation perturbations.
 
@@ -6,7 +6,7 @@ Deployment-oriented evaluation protocol for robotic manipulation tasks under sys
 
 ## Overview
 
-ROEPBench runs RLBench-style manipulation episodes, applies vision/depth/occlusion perturbations, and logs success, trajectory length, recovery behavior, and safety-related metrics. It is designed for reproducible comparison of baseline and recovery-aware policies.
+ROEP runs RLBench-style manipulation episodes, applies vision/depth/occlusion perturbations, and logs success, trajectory length, recovery behavior, and safety-related metrics. It is designed for reproducible comparison of baseline and recovery-aware policies.
 
 ## Repository layout
 
