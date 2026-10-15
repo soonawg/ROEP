@@ -1,0 +1,32 @@
+name: roep_libero_core
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.8.13
+  - pip
+  - setuptools<70
+  - wheel
+  - git
+  - cmake
+  - ninja
+  - ffmpeg
+  - numpy=1.24.*
+  - scipy=1.10.*
+  - pytorch=2.2.0
+  - torchvision=0.17.0
+  - h5py
+  - pillow
+  - imageio
+  - pyyaml
+  - tqdm
+  - pandas
+  - pip:
+      - bddl
+      - cloudpickle
+      - easydict
+      - gym
+      - imageio[ffmpeg]
+      - matplotlib
+      - robosuite==1.4.1

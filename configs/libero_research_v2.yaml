@@ -1,0 +1,461 @@
+{
+  "campaign_name": "libero_research_reset_v2",
+  "paper_identity": "protocol_paper",
+  "paper_benchmark_backend": "libero",
+  "global": {
+    "suite": "libero_goal",
+    "scenario": "natural_ood_medium",
+    "profiles": "medium",
+    "recovery_profiles": "mild,medium,strong",
+    "tasks": [
+      "open_the_middle_drawer_of_the_cabinet",
+      "put_the_bowl_on_the_plate",
+      "put_the_bowl_on_the_stove",
+      "turn_on_the_stove"
+    ]
+  },
+  "external_model_policy": {
+    "paper_admission_task": "",
+    "paper_admission_suite": "libero_goal",
+    "paper_min_baseline_sr": 0.05,
+    "paper_min_success_total": 1,
+    "paper_control_action_abs_min": 1e-06
+  },
+  "model_roster": {
+    "main_models_csv": "openvla_7b,smolvla_base,xvla",
+    "primary_anchor_candidates_csv": "openvla_7b,smolvla_base",
+    "followup_models_csv": "",
+    "frozen_legacy_models_csv": "peract,octo_base,rdt_170m"
+  },
+  "calibration_reset": {
+    "task_pool": [
+      "open_the_middle_drawer_of_the_cabinet",
+      "put_the_bowl_on_the_plate",
+      "put_the_bowl_on_the_stove",
+      "turn_on_the_stove"
+    ],
+    "minimal_gate": {
+      "profiles": "medium",
+      "research_profiles": "medium",
+      "smoke_episodes": 1,
+      "smoke_seeds": "0",
+      "smoke_max_steps": 120,
+      "admission_episodes": 2,
+      "admission_seeds": "0,1",
+      "admission_max_steps": 120,
+      "perturb_episodes": 1,
+      "perturb_seeds": "0",
+      "perturb_max_steps": 120,
+      "noise_episodes": 1,
+      "noise_seeds": "0",
+      "noise_max_steps": 120,
+      "recovery_episodes": 1,
+      "recovery_seeds": "0",
+      "recovery_max_steps": 120,
+      "run_core_canary": 0,
+      "run_official_canaries": 0,
+      "run_smoke": 1,
+      "run_validate": 1,
+      "run_admission": 1,
+      "run_perturb": 1,
+      "run_noise_floor": 0,
+      "run_recovery": 1,
+      "run_full": 1,
+      "require_all_model_canaries_for_admission": 0,
+      "reuse_existing_phase_outputs": 1,
+      "continue_on_stage_error": 1
+    },
+    "selection": {
+      "top_k_tasks": 2,
+      "rank_primary": "admitted_clean_count",
+      "rank_tiebreak_1": "avg_success_total",
+      "rank_tiebreak_2": "lower_avg_timeout_rate",
+      "stop_if_unique_admitted_models_below": 2
+    }
+  },
+  "paper_budget": {
+    "clean_admission": {
+      "episodes": 10,
+      "seeds": "0,1,2,3,4",
+      "max_steps": 120
+    },
+    "perturbation": {
+      "profiles": "mild,medium,strong",
+      "episodes": 10,
+      "seeds": "0,1,2,3,4",
+      "max_steps": 120
+    },
+    "noise_floor": {
+      "profiles": "mild,medium,strong",
+      "episodes": 10,
+      "seeds": "0,1,2,3,4",
+      "max_steps": 120
+    },
+    "recovery_full": {
+      "profiles": "mild,medium,strong",
+      "episodes": 10,
+      "seeds": "0,1,2,3,4",
+      "max_steps": 120,
+      "fixed_tau_only": true
+    }
+  },
+  "prm_training": {
+    "enabled": true,
+    "out_root": "./checkpoints/libero_prm_v2",
+    "device": "auto",
+    "horizon_steps": 5,
+    "alpha": 0.05,
+    "epochs": 40,
+    "batch_size": 256,
+    "lr": 0.001,
+    "hidden_dims": "128,64,32",
+    "strict_keys": "true",
+    "min_rows": 100,
+    "train_ratio": 0.8,
+    "val_ratio": 0.1,
+    "safe_outcomes": "success",
+    "positive_outcomes": "unsafe_attempt",
+    "fallback_positive_outcomes": "timeout",
+    "fallback_safe_outcomes": "timeout",
+    "fallback_risk_episode_prefix_as_safe": "true"
+  },
+  "protocol_first": {
+    "priority": "protocol_first",
+    "comparison_policy": "common_tasks_only",
+    "common_task_set": [
+      "put_the_cream_cheese_in_the_bowl"
+    ],
+    "common_models": [
+      "openvla_7b",
+      "smolvla_base"
+    ],
+    "anchor_candidate": {
+      "model": "smolvla_base",
+      "task": "turn_on_the_stove",
+      "scenario": "natural_ood_medium",
+      "role": "first_anchor_candidate"
+    },
+    "task_diversity_evidence": [
+      {
+        "model": "openvla_7b",
+        "task": "put_the_bowl_on_the_plate",
+        "scenario": "natural_ood_medium",
+        "role": "appendix_task_diversity"
+      }
+    ],
+    "common_task_audit": [
+      {
+        "model": "openvla_7b",
+        "task": "turn_on_the_stove",
+        "scenario": "natural_ood_medium",
+        "role": "common_task_clean_perturb_only"
+      }
+    ],
+    "backlog_models": [
+      "spatialvla",
+      "vla_adapter"
+    ],
+    "task_selection_policy": {
+      "suite": "libero_goal",
+      "max_paper_tasks": 4,
+      "task_taxonomy": {
+        "open_the_middle_drawer_of_the_cabinet": {
+          "interaction_family": "drawer_open"
+        },
+        "put_the_bowl_on_the_stove": {
+          "interaction_family": "surface_placement"
+        },
+        "put_the_wine_bottle_on_top_of_the_cabinet": {
+          "interaction_family": "top_surface_placement"
+        },
+        "open_the_top_drawer_and_put_the_bowl_inside": {
+          "interaction_family": "drawer_open_and_insert"
+        },
+        "put_the_bowl_on_top_of_the_cabinet": {
+          "interaction_family": "top_surface_placement"
+        },
+        "push_the_plate_to_the_front_of_the_stove": {
+          "interaction_family": "object_push"
+        },
+        "put_the_cream_cheese_in_the_bowl": {
+          "interaction_family": "container_insertion"
+        },
+        "turn_on_the_stove": {
+          "interaction_family": "switch_toggle"
+        },
+        "put_the_bowl_on_the_plate": {
+          "interaction_family": "surface_placement"
+        },
+        "put_the_wine_bottle_on_the_rack": {
+          "interaction_family": "rack_placement"
+        }
+      },
+      "search_stage": {
+        "hard_require_clean_decision": "admitted_clean",
+        "hard_require_perturbation_status": "passed",
+        "top_k_tasks": 2,
+        "rank_primary": "min_perturb_success_total",
+        "rank_tiebreak_1": "min_positive_risk_episode_total",
+        "rank_tiebreak_2": "sum_perturb_success_total",
+        "rank_tiebreak_3": "lower_avg_clean_timeout_rate"
+      },
+      "paper_stage": {
+        "decisive_formal_gate_statuses": "GO,NO-GO,recovery_blocked"
+      },
+      "paper_role_assignment": {
+        "require_recovery_candidate_min_positive_risk": 1,
+        "prefer_distinct_interaction_family": true,
+        "allow_same_family_backup_if_no_alternative": true
+      },
+      "paper_task_roles": {
+        "negative_evidence_task": "turn_on_the_stove",
+        "task_diversity_evidence_task": "put_the_bowl_on_the_plate",
+        "pending_candidate_task": "put_the_cream_cheese_in_the_bowl"
+      },
+      "provisional_common_recovery_candidates": [
+        "put_the_cream_cheese_in_the_bowl",
+        "put_the_bowl_on_top_of_the_cabinet"
+      ]
+    },
+    "shield_bootstrap_summary_json": "./checkpoints/libero_prm_v2_outside/shield_bootstrap_summary.json",
+    "results_root": "./results/libero_protocol_first",
+    "support_close_budget": {
+      "profiles": "medium",
+      "research_profiles": "medium",
+      "episodes": 4,
+      "seeds": "0,1,2,3,4",
+      "max_steps": 120,
+      "run_noise_floor": true,
+      "run_recovery": true,
+      "run_full": true
+    },
+    "recovery_recalibration": {
+      "task_pool": [
+        "open_the_middle_drawer_of_the_cabinet",
+        "put_the_bowl_on_the_plate",
+        "put_the_bowl_on_the_stove",
+        "turn_on_the_stove"
+      ],
+      "models_csv": "openvla_7b,smolvla_base",
+      "profiles": "medium",
+      "episodes": 4,
+      "seeds": "0,1,2,3,4",
+      "max_steps": 120,
+      "run_admission": true,
+      "run_perturb": true,
+      "run_noise_floor": false,
+      "run_recovery": false,
+      "run_full": false,
+      "selection": {
+        "hard_require_clean_decision": "admitted_clean",
+        "hard_require_perturbation_status": "passed",
+        "top_k_tasks": 2,
+        "rank_primary": "min_perturb_success_total",
+        "rank_tiebreak_1": "min_positive_risk_episode_total",
+        "rank_tiebreak_2": "sum_perturb_success_total",
+        "rank_tiebreak_3": "lower_avg_clean_timeout_rate"
+      }
+    },
+    "recovery_recalibration_expansion": {
+      "task_pool": [
+        "open_the_middle_drawer_of_the_cabinet",
+        "put_the_bowl_on_the_stove",
+        "put_the_wine_bottle_on_top_of_the_cabinet",
+        "open_the_top_drawer_and_put_the_bowl_inside",
+        "put_the_bowl_on_top_of_the_cabinet",
+        "push_the_plate_to_the_front_of_the_stove",
+        "put_the_cream_cheese_in_the_bowl",
+        "turn_on_the_stove",
+        "put_the_bowl_on_the_plate",
+        "put_the_wine_bottle_on_the_rack"
+      ],
+      "models_csv": "openvla_7b,smolvla_base",
+      "profiles": "medium",
+      "episodes": 4,
+      "seeds": "0,1,2,3,4",
+      "max_steps": 120,
+      "run_admission": true,
+      "run_perturb": true,
+      "run_noise_floor": false,
+      "run_recovery": false,
+      "run_full": false,
+      "results_root": "./results/libero_protocol_first/recovery_recalibration_expansion",
+      "namespace_prefix": "protocol_first_recovery_recalibration_expansion_v1",
+      "selection": {
+        "hard_require_clean_decision": "admitted_clean",
+        "hard_require_perturbation_status": "passed",
+        "top_k_tasks": 2,
+        "rank_primary": "min_perturb_success_total",
+        "rank_tiebreak_1": "min_positive_risk_episode_total",
+        "rank_tiebreak_2": "sum_perturb_success_total",
+        "rank_tiebreak_3": "lower_avg_clean_timeout_rate"
+      }
+    },
+    "targets": [
+      {
+        "name": "openvla_cream_cheese_main",
+        "model": "openvla_7b",
+        "task": "put_the_cream_cheese_in_the_bowl",
+        "scenario": "natural_ood_medium",
+        "role": "main_common_recovery_task",
+        "paper_table_role": "main",
+        "run_noise_floor": true,
+        "run_recovery": true,
+        "run_full": true
+      },
+      {
+        "name": "smolvla_cream_cheese_main",
+        "model": "smolvla_base",
+        "task": "put_the_cream_cheese_in_the_bowl",
+        "scenario": "natural_ood_medium",
+        "role": "main_common_recovery_task",
+        "paper_table_role": "main",
+        "run_noise_floor": true,
+        "run_recovery": true,
+        "run_full": true
+      },
+      {
+        "name": "openvla_bowl_top_backup",
+        "model": "openvla_7b",
+        "task": "put_the_bowl_on_top_of_the_cabinet",
+        "scenario": "natural_ood_medium",
+        "role": "backup_common_recovery_candidate",
+        "paper_table_role": "backup",
+        "run_noise_floor": true,
+        "run_recovery": true,
+        "run_full": true
+      },
+      {
+        "name": "smolvla_bowl_top_backup",
+        "model": "smolvla_base",
+        "task": "put_the_bowl_on_top_of_the_cabinet",
+        "scenario": "natural_ood_medium",
+        "role": "backup_common_recovery_candidate",
+        "paper_table_role": "backup",
+        "run_noise_floor": true,
+        "run_recovery": true,
+        "run_full": true
+      }
+    ]
+  },
+  "comparison_views": [
+    "libero_style",
+    "robustness_only",
+    "responsible_robot_bench_like",
+    "roboeval_like",
+    "roepbench"
+  ],
+  "paper_status_taxonomy": {
+    "clean_stage": [
+      "engineering_blocker",
+      "clean_not_admitted",
+      "admitted_clean"
+    ],
+    "perturb_stage": [
+      "perturbation_ready",
+      "perturbation_blocked",
+      "inconclusive_low_support"
+    ],
+    "recovery_stage": [
+      "recovery_ready",
+      "recovery_blocked"
+    ]
+  },
+  "benchmark_comparison_matrix": [
+    "ResponsibleRobotBench",
+    "RoboEval",
+    "Trustworthy Evaluation",
+    "LIBERO-X / LIBERO-PRO / VLA-Arena",
+    "CALVIN / VLABench",
+    "VLA-Risk"
+  ],
+  "results_layout": {
+    "admission_root": "results/external_model_validation",
+    "research_root": "results/libero_validation",
+    "noise_root": "results/libero_validation_noise",
+    "admission_namespace_prefix": "libero_reset_min_gate_admission_v1",
+    "research_namespace_prefix": "libero_reset_min_gate_research_v1",
+    "noise_namespace_prefix": "libero_reset_min_gate_noise_v1"
+  },
+  "models": [
+    {
+      "name": "openvla_7b",
+      "backend": "shell",
+      "enabled": true,
+      "paper_candidate": true,
+      "platform_candidate": true,
+      "paper_role": "anchor_candidate",
+      "benchmark_backend": "libero"
+    },
+    {
+      "name": "smolvla_base",
+      "backend": "shell",
+      "enabled": true,
+      "paper_candidate": true,
+      "platform_candidate": true,
+      "paper_role": "anchor_candidate",
+      "benchmark_backend": "libero"
+    },
+    {
+      "name": "xvla",
+      "backend": "shell",
+      "enabled": true,
+      "paper_candidate": true,
+      "platform_candidate": true,
+      "paper_role": "runnable_negative_comparator",
+      "benchmark_backend": "libero"
+    },
+    {
+      "name": "spatialvla",
+      "backend": "shell",
+      "enabled": false,
+      "paper_candidate": false,
+      "platform_candidate": true,
+      "paper_role": "backlog_candidate",
+      "benchmark_backend": "libero"
+    },
+    {
+      "name": "vla_adapter",
+      "backend": "shell",
+      "enabled": false,
+      "paper_candidate": false,
+      "platform_candidate": true,
+      "paper_role": "backlog_candidate",
+      "benchmark_backend": "libero"
+    },
+    {
+      "name": "octo_base",
+      "backend": "shell",
+      "enabled": false,
+      "paper_candidate": false,
+      "platform_candidate": true,
+      "paper_role": "frozen_followup",
+      "benchmark_backend": "legacy_rlbench"
+    },
+    {
+      "name": "rdt_170m",
+      "backend": "shell",
+      "enabled": false,
+      "paper_candidate": false,
+      "platform_candidate": true,
+      "paper_role": "frozen_followup",
+      "benchmark_backend": "legacy_rlbench"
+    },
+    {
+      "name": "peract",
+      "backend": "peract",
+      "enabled": false,
+      "paper_candidate": false,
+      "platform_candidate": false,
+      "paper_role": "legacy_calibration_only",
+      "benchmark_backend": "legacy_rlbench"
+    }
+  ],
+  "notes": [
+    "ROEPBench is positioned as a deployment-oriented evaluation protocol, not a VLA leaderboard.",
+    "Clean -> perturb -> recovery/full remains the required paired-condition structure.",
+    "Current single-task evidence is insufficient for a paper anchor, so calibration reset is required.",
+    "The paper task set is selected from the calibration pool using admitted_clean count, success total, and timeout rate.",
+    "Recovery/full remains blocked until model-specific LIBERO PRM/shield checkpoints exist."
+  ]
+}

@@ -1,0 +1,28 @@
+name: roep_smolvla_libero
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+  - setuptools>=71,<81
+  - wheel
+  - git
+  - cmake
+  - ninja
+  - libstdcxx-ng>=14
+  - libgcc-ng>=14
+  - ffmpeg
+  - numpy
+  - scipy
+  - pillow
+  - imageio
+  - pyyaml
+  - pandas
+  - pip:
+      - accelerate
+      - datasets
+      - einops
+      - safetensors
+      - sentencepiece

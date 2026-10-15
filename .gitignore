@@ -1,0 +1,47 @@
+# Python cache/artifacts
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+
+# OS/editor artifacts
+.DS_Store
+.idea/
+.vscode/
+*.Zone.Identifier
+
+# Secrets / local env
+.env
+*.pem
+*.key
+
+# Runtime logs
+*.log
+
+# ROEPBench run outputs (regenerate locally)
+runs/
+results/
+
+# Local checkpoints, weights, datasets (not for GitHub)
+checkpoints/
+model_ckpts/
+data/
+
+# Vendored third-party checkouts (install separately)
+external/
+
+# Internal notes / manuscripts (not for GitHub)
+docs/
+paper/
+peer/
+others/
